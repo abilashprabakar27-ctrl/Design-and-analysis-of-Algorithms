@@ -1,0 +1,72 @@
+import random
+
+comparison_count = 0
+
+def min_max_dc(arr, low, high):
+    global comparison_count
+    if low == high:
+        return arr[low], arr[low]
+    if high == low + 1:
+        comparison_count = comparison_count + 1
+        if arr[low] < arr[high]:
+            return arr[low], arr[high]
+        else:
+            return arr[high], arr[low]
+    mid = (low + high) // 2
+    lmin, lmax = min_max_dc(arr, low, mid)
+    rmin, rmax = min_max_dc(arr, mid + 1, high)
+    comparison_count = comparison_count + 1
+    if lmin < rmin:
+        overall_min = lmin
+    else:
+        overall_min = rmin
+    comparison_count = comparison_count + 1
+    if lmax > rmax:
+        overall_max = lmax
+    else:
+        overall_max = rmax
+    return overall_min, overall_max
+
+def min_max_naive(arr):
+    mn = arr[0]
+    mx = arr[0]
+    comps = 0
+    for i in range(len(arr)):
+        if i == 0:
+            continue
+        x = arr[i]
+        comps = comps + 1
+        if x < mn:
+            mn = x
+        comps = comps + 1
+        if x > mx:
+            mx = x
+    return mn, mx, comps
+
+arr = [3, 1, 7, 4, 9, 2, 8, 5, 6, 0]
+comparison_count = 0
+mn, mx = min_max_dc(arr, 0, len(arr) - 1)
+dc_comps = comparison_count
+mn_naive, mx_naive, naive_comps = min_max_naive(arr)
+
+print("Array: " + str(arr))
+print("Min: " + str(mn) + ", Max: " + str(mx))
+print("D&C Comparisons: " + str(dc_comps))
+print("Naive Comparisons: " + str(naive_comps))
+
+print("")
+print("    Size     DC Comps    Naive Comps   Formula 3n/2-2")
+print("--------------------------------------------------------")
+
+sizes = [10, 100, 1000, 10000]
+for i in range(len(sizes)):
+    size = sizes[i]
+    arr = []
+    for j in range(size):
+        arr.append(random.randint(1, 10000))
+    comparison_count = 0
+    mn, mx = min_max_dc(arr, 0, len(arr) - 1)
+    dc = comparison_count
+    mn2, mx2, naive = min_max_naive(arr)
+    formula = 3 * size // 2 - 2
+    print("   " + str(size) + "          " + str(dc) + "          " + str(naive) + "             " + str(formula))
